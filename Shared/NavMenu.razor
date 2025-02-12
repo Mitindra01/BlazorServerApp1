@@ -1,0 +1,70 @@
+﻿@using MudBlazor
+<div class="top-row ps-3 navbar navbar-dark">
+    <div class="container-fluid">
+        <a class="navbar-brand" href="">BillPay Admin UI</a>
+    </div>
+</div>
+<input type="checkbox" title="Navigation menu" class="navbar-toggler" />
+<div class="nav-scrollable" onclick="document.querySelector('.navbar-toggler').click()">
+    <nav class="flex-column">
+        <div class="nav-item px-3">
+            <NavLink class="nav-link" href="" Match="NavLinkMatch.All">
+                <span class="bi bi-house-door-fill-nav-menu" aria-hidden="true"></span> Home
+            </NavLink>
+        </div>
+        <div class="nav-item px-3">
+            <NavLink class="nav-link" href="BuilderV3">
+                <span class="bi bi-list-nested-nav-menu" aria-hidden="true"></span> Builder-V3
+            </NavLink>
+        </div>
+        <div class="nav-item px-3">
+            <NavLink class="nav-link" href="BuilderV4">
+                <span class="bi bi-list-nested-nav-menu" aria-hidden="true"></span> Builder-V4
+            </NavLink>
+        </div>
+        <div class="nav-item px-3">
+            <NavLink class="nav-link" href="CFNAdminUI">
+                <span class="bi bi-list-nested-nav-menu" aria-hidden="true"></span> CFN Admin
+            </NavLink>
+        </div>
+        <div class="nav-item px-3">
+            <NavLink class="nav-link" href="GCMSTable">
+                <span class="bi bi-list-nested-nav-menu" aria-hidden="true"></span> GCMS Admin
+            </NavLink>
+        </div>
+        
+            <NavLink class="nav-link" href="#">
+                <MudIconButton Icon="@Icons.Material.Filled.Logout" Color="Color.Primary" />
+                <span aria-hidden="true"></span> Logout
+            </NavLink>
+        <!-- Logout button at the bottom -->
+        <div class="nav-item px-3 logout">
+            <NavLink class="nav-link" href="#">
+                <span class="oi oi-account-logout"></span> Logout2
+            </NavLink>
+        </div>
+       
+    </nav>
+</div>
+<style>
+    .nav-menu {
+        display: flex;
+        flex-direction: column;
+        height: 90vh; /* Make the menu take full height */
+    }
+
+    .logout {
+        margin-top: auto; /* Pushes Logout to the bottom */
+    }
+</style>
+
+@code {
+    private bool collapseNavMenu = true;
+
+    private string? NavMenuCssClass => collapseNavMenu ? "collapse" : null;
+
+    private void ToggleNavMenu()
+    {
+        collapseNavMenu = !collapseNavMenu;
+    }
+}

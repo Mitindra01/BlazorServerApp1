@@ -1,0 +1,37 @@
+﻿@using BlazorServerApp1.Data
+@inject ISnackbar Snackbar
+
+<MudDialog>
+    <TitleContent>
+        <MudText Typo="Typo.h6">
+            <MudIcon Icon="@Icons.Material.Filled.Edit" Class="mr-3 mb-n1" />
+            Edit Sponsor Mapping?
+        </MudText>
+    </TitleContent>
+    <DialogContent>
+        <MudHidden Breakpoint="Breakpoint.Always"><MudTextField Value="@_sponsorMapping.Id.ToString()" Label="Sponsor ID" /></MudHidden>
+        <MudTextField Value="@_sponsorMapping.CertificateName" Variant="Variant.Outlined" Label="Certificate Name" />
+        <MudTextField Label="Sponsor List" Lines="5" Variant="Variant.Outlined" Value="@string.Join(", ",_sponsorMapping.SponsorList)" />
+    </DialogContent>
+    <DialogActions>
+        <MudButton OnClick="Cancel">Cancel</MudButton>
+        <MudButton Color="Color.Error" OnClick="Update">Update</MudButton>
+    </DialogActions>
+</MudDialog>
+
+@code {
+    [CascadingParameter]
+    private IMudDialogInstance MudDialog { get; set; }
+
+    [Parameter]
+    public SponsorMapping _sponsorMapping { get; set; } = new SponsorMapping();
+
+    private void Cancel() => MudDialog.Cancel();
+
+    private void Update()
+    {
+        //In a real world scenario this bool would probably be a service to delete the item from api/database
+        Snackbar.Add("Data Updated successfully", Severity.Success);
+        MudDialog.Close(DialogResult.Ok(_sponsorMapping.Id));
+    }
+}

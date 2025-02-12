@@ -1,0 +1,247 @@
+﻿@page "/"
+@using BlazorServerApp1.Data
+@using MudBlazor
+@inject IDialogService DialogService
+<style>
+    .actionLinkSeparator {
+        margin-left: 5px;
+        margin-right: 5px;
+    }
+</style>
+<MudTabs>
+    <!-- 1st Table -->
+    <MudTabPanel Text="Sponsor List">
+        <MudGrid>
+            <MudItem xs="12" sm="12">
+                <MudPaper Class="pa-4">
+                    <MudForm Spacing="0">
+                        <MudGrid>
+                            <MudItem xs="8">
+                                <MudTextField T="string" Label="Sponsor Id" Variant="Variant.Text" Margin="Margin.Dense" />
+                            </MudItem>
+                            <MudItem xs="4" class="d-flex justify-cen">
+                                <MudButton Variant="Variant.Filled" Color="Color.Primary" Class="ml-auto">Search</MudButton>
+                            </MudItem>
+                        </MudGrid>
+                    </MudForm>
+                </MudPaper>
+            </MudItem>
+        </MudGrid>
+        <MudTable Items="@sponsorMapping" Hover="true" Dense="true">
+            <HeaderContent>
+                <MudTh Style="font-weight:bold;width:10%;text-align:center">Actions</MudTh>
+                <MudTh Style="font-weight:bold;width:30%;text-align:left">Certificate Name</MudTh>
+                <MudTh Style="font-weight:bold;max-width:150px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;padding:10px;text-align:left;">Sponsor List</MudTh>
+            </HeaderContent>
+
+            <RowTemplate Context="sponsorMapping">
+                <MudTd DataLabel="Action" Style="width:10%;text-align:center">
+                    <MudTooltip Text="Edit">
+                        <MudIconButton Size="@Size.Small" Icon="@Icons.Material.Outlined.Edit" OnClick="@((e) => FnEditSponsorMapping(sponsorMapping))" />
+                    </MudTooltip>
+                    <span class="actionLinkSeparator">|</span>
+                    <MudTooltip Text="Delete">
+                        <MudIconButton Size="@Size.Small" Icon="@Icons.Material.Outlined.Delete" OnClick="FnDeleteSponsorMapping" />
+                    </MudTooltip>
+                </MudTd>
+                <MudTd DataLabel="CertificateName" Style="width:30%;text-align:left">@sponsorMapping.CertificateName</MudTd>
+                <MudTd DataLabel="SponsorList">
+                    @if (expandedSponsorId == sponsorMapping.Id)
+                    {
+                        @string.Join(", ", sponsorMapping.SponsorList)
+                        <MudButton Variant="Variant.Text" Color="Color.Primary" Size="@Size.Small" OnClick="() => ToggleMore(null)">
+                            Less...
+                        </MudButton>
+                    }
+                    else
+                    {
+                        @string.Join(", ", sponsorMapping.SponsorList.Take(40))
+                        @if (sponsorMapping.SponsorList.Count > 40)
+                        {
+                            <MudButton Variant="Variant.Text" Color="Color.Primary" Size="@Size.Small" OnClick="() => ToggleMore(sponsorMapping.Id)">
+                                More...
+                            </MudButton>
+                        }
+                    }
+                </MudTd>
+                
+            </RowTemplate>
+        </MudTable>
+    </MudTabPanel>
+
+    <!-- 2nd Table -->
+    <MudTabPanel Text="Edw Summary by Sponsor">
+        <MudGrid>
+            <MudItem xs="12" sm="12">
+                <MudPaper Class="pa-4">
+                    <MudForm Spacing="0">
+                        <MudGrid>
+                            <MudItem xs="4">
+                                <MudTextField T="string" Label="Sponsor Id" Variant="Variant.Text" Margin="Margin.Dense" />
+                            </MudItem>
+                            <MudItem xs="4">
+                                <MudDatePicker Label="Start Time" Variant="Variant.Text" Margin="Margin.Dense" />
+                            </MudItem>
+                            <MudItem xs="4">
+                                <MudDatePicker Label="End Time" Variant="Variant.Text" Margin="Margin.Dense" />
+                            </MudItem>
+                            <MudItem xs="6">
+                                <MudTextField T="string" Label="Function" Variant="Variant.Text" Margin="Margin.Dense" />
+                            </MudItem>
+                            <MudItem xs="6">
+                                <MudTextField T="string" Label="Success" Variant="Variant.Text" Margin="Margin.Dense" />
+                            </MudItem>
+                            <MudItem xs="12" class="d-flex justify-cen">
+                                <MudButton Variant="Variant.Filled" Color="Color.Primary" Class="ml-auto">Search</MudButton>
+                            </MudItem>
+                        </MudGrid>
+                    </MudForm>
+                </MudPaper>
+            </MudItem>
+        </MudGrid>
+        <MudTable Items="@edwSummarybySponsor" Hover="true" Dense="true" HorizontalScrollbar="true" Style="overflow-x:auto">
+            <HeaderContent>
+                <MudTh Style="font-weight: bold;">Server Name</MudTh>
+                <MudTh Style="font-weight: bold;">Sponsor</MudTh>
+                <MudTh Style="font-weight: bold;">Subscriber</MudTh>
+                <MudTh Style="font-weight: bold;">Correration Id</MudTh>
+                <MudTh Style="font-weight: bold;">Detail</MudTh>
+                <MudTh Style="font-weight: bold;">Start Time</MudTh>
+                <MudTh Style="font-weight: bold;">Duration</MudTh>
+                <MudTh Style="font-weight: bold;">Activity Name</MudTh>
+                <MudTh Style="font-weight: bold;">Version</MudTh>
+                <MudTh Style="font-weight: bold;">Success</MudTh>
+                <MudTh Style="font-weight: bold;">Response Code</MudTh>
+                <MudTh Style="font-weight: bold;">Response Message</MudTh>
+                <MudTh Style="font-weight: bold;">Session Correration Id</MudTh>
+            </HeaderContent>
+            <RowTemplate Context="edwSummarybySponsor">
+                <MudTd DataLabel="ServerName">@edwSummarybySponsor.ServerName</MudTd>
+                <MudTd DataLabel="Sponsor">@edwSummarybySponsor.Sponsor</MudTd>
+                <MudTd DataLabel="Subscriber">@edwSummarybySponsor.Subscriber</MudTd>
+                <MudTd DataLabel="CorrerationId">@edwSummarybySponsor.CorrerationId</MudTd>
+                <MudTd DataLabel="Detail">@edwSummarybySponsor.Detail</MudTd>
+                <MudTd DataLabel="StartTime">@edwSummarybySponsor.StartTime</MudTd>
+                <MudTd DataLabel="Duration">@edwSummarybySponsor.Duration</MudTd>
+                <MudTd DataLabel="Activity">@edwSummarybySponsor.Activity</MudTd>
+                <MudTd DataLabel="Version">@edwSummarybySponsor.Version</MudTd>
+                <MudTd DataLabel="Success">@edwSummarybySponsor.Success</MudTd>
+                <MudTd DataLabel="ResponseCode">@edwSummarybySponsor.ResponseCode</MudTd>
+                <MudTd DataLabel="ResponseMessage">@edwSummarybySponsor.ResponseMessage</MudTd>
+                <MudTd DataLabel="SessionCorrerationId">@edwSummarybySponsor.SessionCorrerationId</MudTd>
+            </RowTemplate>
+        </MudTable>
+
+    </MudTabPanel>
+</MudTabs>
+@code {
+    //Expand Feature more... Less...
+    private int? expandedSponsorId = null;
+    private void ToggleMore(int? sponsorId)
+    {
+        if (expandedSponsorId == sponsorId)
+            expandedSponsorId = null; // Collapse if already expanded
+        else
+            expandedSponsorId = sponsorId; // Expand if not already expanded
+    }
+    //Edit Feature
+    private async Task FnEditSponsorMapping(SponsorMapping newsponsorMapping)
+    {
+        var parameters = new DialogParameters<EditSponsorMapping> { { x => x._sponsorMapping, newsponsorMapping } };
+        var options = new DialogOptions
+            {
+                MaxWidth = MaxWidth.Medium,
+                FullWidth = true,
+                CloseButton = true
+            };
+        // Open the dialog with the parameters and options
+        var dialog = await DialogService.ShowAsync<EditSponsorMapping>("Edit Sponsors", parameters, options);
+        var result = await dialog.Result;
+
+        if (!result.Canceled)
+        {
+            //In a real world scenario we would reload the data from the source here since we "removed" it in the dialog already.
+            int.TryParse(result.Data.ToString(), out int UpdatdData);
+            sponsorMapping.RemoveAll(item => item.Id == UpdatdData);
+        }
+    }
+    //Delete Feature
+    private Task FnDeleteSponsorMapping()
+    {
+        var parameters = new DialogParameters<DeleteSponsorMapping>
+        {
+            { x => x.ContentText, "Do you really want to delete these records? This process cannot be undone." },
+            { x => x.ButtonText, "Delete" },
+            { x => x.Color, Color.Error }
+        };
+        var options = new DialogOptions() { CloseButton = true, MaxWidth = MaxWidth.ExtraSmall };
+        return DialogService.ShowAsync<DeleteSponsorMapping>("Delete", parameters, options);
+    }
+    // Sample Data for SponsorMapping and edwSummarybySponsor
+    /*private List<SponsorMapping> sponsorMapping = new()
+    {
+        new SponsorMapping { Id = 1, CertificateName = "Sample Certificate 1", SponsorList = new spo "205,584,115,565,156,114,148,511,587,464,542,2554,559,114,1122,118,844,205,584,115,565,156,114,148,511,587,464,542,2554,559,114,1122,118,844,,156,114,148,511,587,464,542,2554,559,114,1122,118,844,205,584,115,565,156,114,148,511,587,464,542,2554,559,114,1122,118,844" },
+        new SponsorMapping { Id = 2, CertificateName = "Sample Certificate 2", SponsorList = "205,584,447,565,156,114,488,442,478,464,542,2554,559,114,1122,118,489" },
+        new SponsorMapping { Id = 3, CertificateName = "Sample Certificate 3", SponsorList = "011,125,477,422,140,148,147,722,587,464,542,2554,559,114,1122,118,487" }
+    };*/
+    private List<SponsorMapping> sponsorMapping = new()
+    {
+        new SponsorMapping
+        {
+            Id = 1,
+            CertificateName = "Sample Certificate 1",
+            SponsorList = new List<string>
+            {
+                "205", "584", "115", "565", "156", "114", "148", "511", "587", "464",
+                "542", "2554", "559", "114", "1122", "118", "844", "205", "584", "115",
+                "565", "156", "114", "148", "511", "587", "464", "542", "2554", "559",
+                "114", "1122", "118", "844", "156", "114", "148", "511", "587", "464",
+                "542", "2554", "559", "114", "1122", "118", "844", "205", "584", "115",
+                "565", "156", "114", "148", "511", "587", "464", "542", "2554", "559",
+                "114", "1122", "118", "844","434","587", "464", "542", "2554", "559",
+                "114", "1122", "118", "844", "156", "114", "148", "511", "587", "464",
+                "542", "2554", "559", "114", "1122", "118", "844", "205","587", "464",
+                "114", "1122", "118", "844", "156", "114", "148", "511", "587", "464",
+                "542", "2554", "559", "114", "1122", "118", "844", "205", "542", "2554",
+                "559","1122", "118", "844", "156", "114", "148", "511", "587", "464",
+                "542", "2554", "559", "114", "1122", "118", "844", "205","587", "464",
+                "114", "1122", "118", "844", "156", "114", "148", "511", "587", "464",
+                "542", "2554", "559", "114", "1122", "118", "844", "205", "542", "2554",
+                "559"
+            }
+        },
+        new SponsorMapping
+        {
+            Id = 2,
+            CertificateName = "Sample Certificate 2",
+            SponsorList = new List<string>
+            {
+                "205", "584", "447", "565", "156", "114", "488", "442", "478", "464",
+                "542", "2554", "559", "114", "1122", "118", "489"
+            }
+        },
+        new SponsorMapping
+        {
+            Id = 3,
+            CertificateName = "Sample Certificate 3",
+            SponsorList = new List<string>
+            {
+                "011", "125", "477", "422", "140", "148", "147", "722", "587", "464",
+                "542", "2554", "559", "114", "1122", "118", "487"
+            }
+        }
+    };
+    private List<EDWSummarybySponsor> edwSummarybySponsor = new()
+    {
+        new EDWSummarybySponsor { ServerName = "JWUDDHHJ", Sponsor = "11414", Subscriber = "0121141115558",CorrerationId = "jfhfue8933jjgfg5",
+        Detail = "", StartTime = "02-06-13 13:13:59",Duration = "670ms", Activity = "SBEPaymentisGet",Version = "3.1", Success = "True",
+        ResponseCode = "SCS", ResponseMessage = "N/A",SessionCorrerationId = "hfdfdkfhkh343kj3hh"
+        },
+         new EDWSummarybySponsor { ServerName = "DGDDFDG", Sponsor = "11454", Subscriber = "565654565466",CorrerationId = "hsfdhdfh455j4j4nn",
+        Detail = "", StartTime = "02-07-13 13:13:59",Duration = "640ms", Activity = "SBEPaymentisGet",Version = "3.1", Success = "True",
+        ResponseCode = "SCS", ResponseMessage = "N/A",SessionCorrerationId = "ggte534545yy6h6yh6"
+        },
+    };
+}
+
+

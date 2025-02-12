@@ -1,0 +1,101 @@
+﻿@page "/datagrid"
+
+<MudTable Items="items" Dense Hover="true" Bordered="true">
+    <HeaderContent>
+        <MudTh> ID </MudTh>
+        <MudTh> Name </MudTh>
+        <MudTh> Age </MudTh>
+        <MudTh> Actions </MudTh>
+    </HeaderContent>
+
+    <RowTemplate Context="item">
+        <MudTd> @item.Id </MudTd>
+        <MudTd>
+            @if (editId == item.Id)
+            {
+                <MudTextField @bind-Value="item.Name" />
+            }
+            else
+            {
+                @item.Name
+            }
+        </MudTd>
+        <MudTd>
+            @if (editId == item.Id)
+            {
+                <MudNumericField T="int" @bind-Value="item.Age" />
+            }
+            else
+            {
+                @item.Age
+            }
+        </MudTd>
+        <MudTd>
+            @if (editId == item.Id)
+            {
+                <MudButton Color="Color.Success" Size="Size.Small" OnClick="() => SaveEdit(item)">Save</MudButton>
+                <MudButton Color="Color.Secondary" Size="Size.Small" OnClick="CancelEdit">Cancel</MudButton>
+            }
+            else
+            {
+                <MudIconButton Icon="@Icons.Material.Filled.Edit" Color="Color.Primary" OnClick="() => EditItem(item)" />
+                <MudIconButton Icon="@Icons.Material.Filled.Delete" Color="Color.Error" OnClick="() => DeleteItem(item)" />
+            }
+        </MudTd>
+         <MudTd>
+        <MudButton Size="@Size.Small" Variant="@Variant.Filled" Color="@Color.Primary">Edit</MudButton>
+            <MudButton Size="@Size.Small" Variant="@Variant.Filled" Color="@Color.Secondary">Delete</MudButton>
+        </MudTd>
+        
+    </RowTemplate>
+</MudTable>
+
+@code {
+    private List<Person> items = new()
+    {
+        new Person { Id = 1, Name = "Alice", Age = 25 },
+        new Person { Id = 2, Name = "Bob", Age = 30 },
+        new Person { Id = 3, Name = "Charlie", Age = 22 }
+    };
+
+    private int? editId = null;
+    private Person originalItem = null;
+
+    private void EditItem(Person item)
+    {
+        editId = item.Id;
+        originalItem = new Person { Id = item.Id, Name = item.Name, Age = item.Age };
+    }
+
+    private void SaveEdit(Person item)
+    {
+        editId = null;
+        originalItem = null;
+    }
+
+    private void CancelEdit()
+    {
+        if (originalItem != null)
+        {
+            var index = items.FindIndex(i => i.Id == originalItem.Id);
+            if (index >= 0)
+            {
+                items[index] = originalItem;
+            }
+        }
+        editId = null;
+        originalItem = null;
+    }
+
+    private void DeleteItem(Person item)
+    {
+        items.Remove(item);
+    }
+
+    public class Person
+    {
+        public int Id { get; set; }
+        public string Name { get; set; }
+        public int Age { get; set; }
+    }
+}
